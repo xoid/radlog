@@ -1,29 +1,25 @@
 #!/usr/bin/perl
 
+my @grep_patterns = qw/radrecv radsend /;
+
+my $color_patterns = {
+			'User-Name = .*' 		=> 'red',
+			'Framed-IP-Address = .*' 	=> 'blue',
+			'Accounting Request' 		=> 'green',
+			'Access Request' 		=> 'green',
+			'id \d+'			=> 'yellow',
+			'Acct-Status-Type = .*'         => 'cyan'
+		     }; 
+
 use strict;
 my $default_file = 'sample_log'; #'/usr/local/billing/bm-7/var/log/log.txt';
-my $file;
 
-eval {
-    local $SIG{ALRM} = sub { die "alarm\n" }; # NB: \n required
-    alarm 1;
-    my $nread = <>;
-    alarm 0;
-    };
+push @ARGV, $default_file if !@ARGV and -t STDIN;
 
-if ($@) 
-{         # timed out
-    die 'some other error: '.$@ unless $@ eq "alarm\n"; # propagate unexpected errors
-    $file = <>;    
-}
-else 
-{         # not timeout, stdin presented
-    open $file, '<', $default_file or die 'Cant open default file'; 
-}
-
-while (<$file>)
+while (<>)
 {
     print;
-
 }
+
+
 
