@@ -1,7 +1,9 @@
 #!/usr/bin/perl
 
 use strict;
-my @search_patterns = ();
+my @search_patterns;
+my @once_search_pattern;
+
 my $search = $ARGV[0] or die 'Usage: radlog <search ip> < log.txt';
 push @search_patterns, $search;
 
@@ -55,13 +57,23 @@ while (<$fd>)
 sub do_str
 {
 	my $str = shift;
+	foreach (@once_search_pattern) # look for our id Answer
+	{
+		if ( $str =~ m/$_/gm ) # ID string found, color and print
+		{
+			print color_str($str);
+			
+		}
+		
+	}
 	foreach (@search_patterns)
 	{
-		if ( $str =~ m/$_/gm ) # this string is good, color and print
+		if ( $str =~ m/$_/gm ) # this string is good, lets color and print
 		{
-			if ($str =~ m/id=(\d+)/) { push @search_patterns, "id $1" } # look for Answer to this request
+			if ($str =~ m/id=(\d+)/) { push @once_search_patterns, "id $1" } # look for Answer to this request
 			print color_str($str);
 		}
+
 	}
 }
 
